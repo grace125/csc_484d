@@ -1,1 +1,1 @@
-Repository for MATH-484D Assignments.
+Repository for CSC-484D Assignments.
