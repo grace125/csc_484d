@@ -50,10 +50,10 @@ impl WaveTable {
     /// `index` should never be negative.
     #[must_use]
     pub fn sample(&self, index: f32) -> f32 {
-        let left_index = index as usize;
+        let left_index = index as usize % self.data.len();
         let right_index = (left_index + 1) % self.data.len();
         let weight = index % 1.0;
-        
+
         self.data[left_index] * weight + self.data[right_index] * (1.0 - weight)
     }
 
