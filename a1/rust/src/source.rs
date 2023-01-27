@@ -1,25 +1,39 @@
 use rodio::Source;
 use std::time::Duration;
+use std::sync::Arc;
 
+#[derive(Clone)]
 pub struct WaveTable {
-    pub data: Vec<f32>,
-    pub sample_rate: u32,
+    data: Arc<Vec<f32>>,
+    sample_rate: u32,
 }
 
 impl WaveTable {
     
     pub fn new(data: Vec<f32>, sample_rate: u32) -> WaveTable {
-        WaveTable { data, sample_rate }
+        WaveTable { 
+            data: Arc::new(data), 
+            sample_rate 
+        }
     }
 
     pub fn from_function<T: SourceFunctionExt>(sample_rate: u32, function: T) -> WaveTable {
         let sample_rate_float = sample_rate as f32;
         WaveTable {
             sample_rate,
-            data: 
+            data: Arc::new(
                 (0..sample_rate)
                     .map(|i| { (function)(i as f32 / sample_rate_float) })
                     .collect()
+                )
+        }
+    }
+
+    pub fn source(&self) -> WaveTableSource {
+        WaveTableSource {
+            table: self.clone(),
+            index: 0.0,
+            increment: 1.0,
         }
     }
     
@@ -34,18 +48,17 @@ impl WaveTable {
         lerp
     }
 
-    pub fn source(self) -> WaveTableSource {
-        WaveTableSource {
-            table: self,
-            index: 0.0,
-            increment: 1.0,
-        }
-    }
-
     pub fn total_duration(&self) -> Duration {
         Duration::from_secs_f32(self.data.len() as f32 / self.sample_rate as f32)
     }
 
+    pub fn sample_rate(&self) -> u32 {
+        self.sample_rate
+    }
+
+    pub fn data(&self) -> &Vec<f32> {
+        &self.data
+    }
 }
 pub struct WaveTableSource {
     table: WaveTable,
