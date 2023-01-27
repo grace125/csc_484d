@@ -67,6 +67,16 @@ impl WaveTable {
         self.sample_rate
     }
 
+    pub fn set_sample_rate(&mut self, sample_rate: u32) {
+        self.sample_rate = sample_rate;
+    }
+
+    #[must_use]
+    pub fn with_sample_rate(mut self, sample_rate: u32) -> Self {
+        self.set_sample_rate(sample_rate);
+        self
+    }
+
     /// Gives a reference to the underlying data of the table.
     #[must_use]
     pub fn data(&self) -> &Vec<f32> {
