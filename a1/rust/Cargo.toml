@@ -14,3 +14,5 @@ opt-level = 1
 [dependencies]
 rand = "0.8.5"
 rodio = { version = "0.16.0", features = ["wav"], default-features = false }
+serde = { version = "1", features = ["derive"] }
+ron = "0.8"
