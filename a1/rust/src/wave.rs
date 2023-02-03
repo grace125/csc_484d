@@ -31,4 +31,3 @@ pub const fn pulse(width: f32) -> impl Fn(f32) -> f32 {
     move |t| if t < width { 1.0 } else { -1.0 }
 }
 
-// TODO: implement pulse wave
