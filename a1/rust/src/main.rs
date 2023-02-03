@@ -38,12 +38,12 @@ fn main() {
 
     let mut sinks: Vec<(Sink, f32)> = (0..NUM_SINKS).map(|_| (Sink::try_new(&stream_handle).unwrap(), 0.0)).collect();
 
-    let wavetable_sin = wave::sin.wavetable(SAMPLE_RATE);
-    let wavetable_triangle = wave::triangle.wavetable(SAMPLE_RATE);
-    let wavetable_square = wave::square.wavetable(SAMPLE_RATE);
-    let wavetable_sawtooth = wave::sawtooth.wavetable(SAMPLE_RATE);
-    let wavetable_pulse = wave::pulse(0.25).wavetable(SAMPLE_RATE);
-    let wavetable_silence = WaveTable::new([0.0], SAMPLE_RATE);
+    let wavetable_sin = wave::sin.wavetable(1000);
+    let wavetable_triangle = wave::triangle.wavetable(1000);
+    let wavetable_square = wave::square.wavetable(1000);
+    let wavetable_sawtooth = wave::sawtooth.wavetable(1000);
+    let wavetable_pulse = wave::pulse(0.25).wavetable(1000);
+    let wavetable_silence = WaveTable::new([0.0]);
 
     for note in notes {
         let start_time = note.0;
@@ -58,7 +58,7 @@ fn main() {
             Wave::Pulse    => &wavetable_pulse
         };
         let source = 
-            table.source()
+            table.source(SAMPLE_RATE)
                 .with_frequency(freq)
                 .take_duration(Duration::from_secs_f32(duration));
 
@@ -66,7 +66,7 @@ fn main() {
 
             if *sink_time <= start_time {
                 let pause = wavetable_silence
-                    .source()
+                    .source(SAMPLE_RATE)
                     .take_duration(Duration::from_secs_f32(start_time - *sink_time));
                 *sink_time = start_time + duration;
                 sink.append(pause);

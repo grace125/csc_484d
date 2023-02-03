@@ -6,30 +6,27 @@ use std::sync::Arc;
 #[derive(Clone)]
 pub struct WaveTable {
     data: Arc<Vec<f32>>,
-    sample_rate: u32,
 }
 
 impl WaveTable {
     
     /// Creates a new wavetable from a collection of samples.
     #[must_use]
-    pub fn new(data: impl IntoIterator<Item = f32>, sample_rate: u32) -> WaveTable {
+    pub fn new(data: impl IntoIterator<Item = f32>) -> WaveTable {
         WaveTable { 
-            data: Arc::new(data.into_iter().collect()), 
-            sample_rate 
+            data: Arc::new(data.into_iter().collect())
         }
     }
 
     /// Creates a new wavetable by sampling a function of the form `Fn(f32) -> f32`
     /// between `0.0` and `1.0`.
     #[must_use]
-    pub fn from_function<T: SourceFunctionExt>(sample_rate: u32, function: T) -> WaveTable {
-        let sample_rate_float = sample_rate as f32;
+    pub fn from_function<T: SourceFunctionExt>(sample_num: u32, function: T) -> WaveTable {
+        let sample_num_float = sample_num as f32;
         WaveTable {
-            sample_rate,
             data: Arc::new(
-                (0..sample_rate)
-                    .map(|i| { (function)(i as f32 / sample_rate_float) })
+                (0..sample_num)
+                    .map(|i| { (function)(i as f32 / sample_num_float) })
                     .collect()
                 )
         }
@@ -37,11 +34,12 @@ impl WaveTable {
 
     /// Creates a [Source] from a wave table. 
     #[must_use]
-    pub fn source(&self) -> WaveTableSource {
+    pub fn source(&self, sample_rate: u32) -> WaveTableSource {
         WaveTableSource {
             table: self.clone(),
             index: 0.0,
             increment: 1.0,
+            sample_rate,
         }
     }
     
@@ -57,26 +55,6 @@ impl WaveTable {
         self.data[left_index] * weight + self.data[right_index] * (1.0 - weight)
     }
 
-    #[must_use]
-    pub fn total_duration(&self) -> Duration {
-        Duration::from_secs_f32(self.data.len() as f32 / self.sample_rate as f32)
-    }
-
-    #[must_use]
-    pub fn sample_rate(&self) -> u32 {
-        self.sample_rate
-    }
-
-    pub fn set_sample_rate(&mut self, sample_rate: u32) {
-        self.sample_rate = sample_rate;
-    }
-
-    #[must_use]
-    pub fn with_sample_rate(mut self, sample_rate: u32) -> Self {
-        self.set_sample_rate(sample_rate);
-        self
-    }
-
     /// Gives a reference to the underlying data of the table.
     #[must_use]
     pub fn data(&self) -> &Vec<f32> {
@@ -89,11 +67,12 @@ pub struct WaveTableSource {
     table: WaveTable,
     index: f32,
     increment: f32,
+    sample_rate: u32
 }
 
 impl WaveTableSource {
     pub fn set_frequency(&mut self, freq: f32) {
-        self.increment = freq * self.table.data.len() as f32 / self.sample_rate() as f32;
+        self.increment = freq * self.table.data.len() as f32 / self.sample_rate as f32;
     }
 
     #[must_use]
@@ -123,7 +102,7 @@ impl Source for WaveTableSource {
     }
 
     fn sample_rate(&self) -> u32 {
-        self.table.sample_rate
+        self.sample_rate
     }
 
     fn total_duration(&self) -> Option<Duration> {

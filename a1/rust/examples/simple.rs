@@ -16,7 +16,7 @@ fn main() {
     let sink = Sink::try_new(&stream_handle).unwrap();
 
     sink.append(
-        wave::sin.wavetable(44100).source()
+        wave::sin.wavetable(1000).source(44100)
             .with_frequency(440.0)
             .take_duration(Duration::from_secs_f32(3.0))
     );
