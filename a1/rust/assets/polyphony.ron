@@ -1,4 +1,8 @@
-[
+[ 
+//   Start time, 
+//        note length, 
+//             midi note, 
+//                 timbre (all options shown)
     (0.0, 4.0, 60, Pulse),
     (0.0, 4.0, 63, Sawtooth),
     (0.0, 4.0, 67, Sine),
@@ -38,5 +42,4 @@
     (28.0, 4.0, 65, Square),
     (28.0,  4.0, 69, Square),
     (28.0, 4.0, 72, Square),
-
 ]
