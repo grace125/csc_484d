@@ -9,7 +9,7 @@
 - [x] (4) Implement Sawtooth, Pulse, Triangle and Noise oscillators.
 - [x] (5) Store your waves in a buffer with a user-provided buffer.
 - [x] (6) Make your synth polyphonic with multiple oscillators.
-- [ ] (7) Implement (1) and (2) in PureData
+- [x] (7) Implement (1) and (2) in PureData
 - [x] (9) Implement 1 through 6 in an unfamiliar language
 - [x] (10) Implement and benchmark 3 versions of the sin function
 
