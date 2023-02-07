@@ -16,7 +16,9 @@
 
 1. Question 1 can be seen in `rust/examples/simple.rs`.
 2. Question 2 can be seen in `rust/examples/bicycle_built_for_two.rs`.
-3. Question 3 can be seen in `rust/src/main.rs`.
+3. Question 3 can be seen in `rust/src/main.rs` and `rust/assets/polyphony.ron`.
+    - I decided to take in the ron file format because it's clean and easy.
+    - Use `cargo run some/input/file.ron` to run.
 4. Question 4 can be seen in `rust/src/wave.rs` and `rust/src/main.rs`.
 5. Question 5 can be seen in `rust/src/wavetable.rs`.
 6. Question 6 can also be seen in `rust/src/main.rs`.
@@ -27,4 +29,4 @@
 10. Question 10 can be seen in `rust/src/sin.rs` and `rust/benches/sin_compare.rs`.
     - It may seem odd that I'm not iterating over a bunch of data-points when benching
       these sin functions, but `criterion` is proven to be accurate on even short 
-      functions.
+      functions. 

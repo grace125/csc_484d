@@ -26,7 +26,7 @@ impl<T: Fn(f32) -> f32 + 'static + Sized> SourceFunctionExt for T {
     }
 }
 
-/// A source of audio created by functions of the form `Fn(f32) -> f32`.
+/// A source of audio created from a function of the form `Fn(f32) -> f32`.
 pub struct FunctionSource<T: Fn(f32) -> f32 + 'static> {
     function: T,
     index: f32,

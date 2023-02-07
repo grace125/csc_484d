@@ -20,7 +20,7 @@ impl WaveTable {
     }
 
     /// Creates a new wavetable by sampling a function of the form `Fn(f32) -> f32`
-    /// between `0.0` and `1.0`.
+    /// `sample_num` times between `0.0` and `1.0`.
     #[must_use]
     pub fn from_function<T: SourceFunctionExt>(sample_num: u32, function: T) -> WaveTable {
         let sample_num_float = sample_num as f32;
