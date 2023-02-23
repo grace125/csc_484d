@@ -13,20 +13,25 @@
 - [x] (9) Implement 1 through 6 in an unfamiliar language
 - [x] (10) Implement and benchmark 3 versions of the sin function
 
+<br>
 
-1. Question 1 can be seen in `rust/examples/simple.rs`.
-2. Question 2 can be seen in `rust/examples/bicycle_built_for_two.rs`.
-3. Question 3 can be seen in `rust/src/main.rs` and `rust/assets/polyphony.ron`.
-    - I decided to take in the ron file format because it's clean and easy.
-    - Use `cargo run some/input/file.ron` to run.
-4. Question 4 can be seen in `rust/src/wave.rs` and `rust/src/main.rs`.
-5. Question 5 can be seen in `rust/src/wavetable.rs`.
-6. Question 6 can also be seen in `rust/src/main.rs`.
-7. Question 7 can be seen in the `puredata` directory.
-9. For question 9, the unfamiliar language used was Rust.
-    - As discussed in class it's fine that I didn't also implement 1 through 6 in 
-      a familiar language.
-10. Question 10 can be seen in `rust/src/sin.rs` and `rust/benches/sin_compare.rs`.
-    - It may seem odd that I'm not iterating over a bunch of data-points when benching
-      these sin functions, but `criterion` is proven to be accurate on even short 
-      functions. 
+- For (1), see `rust/examples/simple.rs`.
+- For (2), see `rust/examples/bicycle_built_for_two.rs`.
+
+See `rust/src/main.rs` and `rust/assets/polyphony.ron` for question 3.
+I decided to use the ron file format because it's clean and easy.
+Run with `cargo run some/input/file.ron`.
+
+- For (4), see `rust/src/wave.rs` and `rust/src/main.rs`. 
+- For (5), see `rust/src/wavetable.rs`.
+- For (6), see `rust/src/main.rs`.
+- For (7), see `puredata` directory.
+
+For question 9, the unfamiliar language used was Rust.
+As discussed in class it's fine that I didn't also implement 1 through 6 in a familiar language.
+
+Question 10 can be seen in `rust/src/sin.rs` and `rust/benches/sin_compare.rs`.
+It may seem odd that I'm benchmarking over one sample of sin,
+but `criterion` is proven to be accurate for benchmarking on even short functions. 
+
+Do reach out if any of my code needs more clarification.
