@@ -48,3 +48,4 @@ bevy = { version = "0.9.1", default-features = false, features = [
     ]}
 midir = { version = "0.9.1", features = ["winrt"] }
 bevy_egui = "0.19.0"
+crossbeam-channel = "0.5.6"

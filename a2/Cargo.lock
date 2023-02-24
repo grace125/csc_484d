@@ -9,6 +9,7 @@ dependencies = [
  "bevy",
  "bevy_egui",
  "criterion",
+ "crossbeam-channel",
  "midir",
  "plotters",
  "rand",
