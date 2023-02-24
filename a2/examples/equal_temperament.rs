@@ -1,22 +1,14 @@
-use a2::prelude::*;
-use rodio::{dynamic_mixer, source::SineWave, OutputStream, Sink, Source};
 use std::time::Duration;
+
+use a2::prelude::*;
+use rodio::{dynamic_mixer, OutputStream, Sink, Source};
 
 fn main() {
     let (_stream, stream_handle) = OutputStream::try_default().unwrap();
     let sink = Sink::try_new(&stream_handle).unwrap();
-    let drone_sink = Sink::try_new(&stream_handle).unwrap();
 
     let asdr = Envelope::adsr(0.8, 0.1, 0.1, 0.5, 0.2, 0.1);
     let wavetable = cool_wave.wavetable(1024);
-    let square_wavetable = wave::square.wavetable(1024);
-
-    drone_sink.append(
-        square_wavetable
-            .source(44100)
-            .with_frequency(440.0)
-            .amplify(0.1),
-    );
 
     for tet in 3..=12 {
         println!("{:?} tet", tet);
@@ -25,10 +17,12 @@ fn main() {
 
         for i in (0..=tet).into_iter().chain((0..tet).rev()) {
             let (controller, mixer) = dynamic_mixer::mixer::<f32>(2, 44100);
-            controller.add(
-                asdr.source_from(wavetable.source(44100).with_frequency(440.0 * step.powi(i)))
-                    .amplify(0.2),
-            );
+            let source = wavetable.source(44100).with_frequency(440.0 * step.powi(i));
+            let source = asdr.source_from(source).amplify(0.2);
+            controller.add(source);
+            let source = wavetable.source(44100).with_frequency(440.0);
+            let source = asdr.source_from(source).amplify(0.2);
+            controller.add(source);
             sink.append(mixer);
         }
 
