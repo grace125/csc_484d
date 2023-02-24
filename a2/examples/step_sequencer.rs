@@ -25,7 +25,7 @@ fn step_sequencer_windows(
     player: Option<ResMut<StepSequencePlayer>>,
 ) {
 
-    for (i, mut layer) in step_sequencer.layers.iter_mut().enumerate() {
+    for (i, layer) in step_sequencer.layers.iter_mut().enumerate() {
         egui::Window::new(format!("Step Sequencer {:?}", i+1)).show(egui_context.ctx_mut(), |ui| {
             for row in layer.data.iter_mut() {
                 ui.horizontal(|ui| {
@@ -139,7 +139,7 @@ fn midi_port_window(
 }
 
 fn play(
-    mut player: Option<ResMut<StepSequencePlayer>>,
+    player: Option<ResMut<StepSequencePlayer>>,
     step_sequencer: Res<StepSequencer>,
     output: Res<MidiOutput>,
     time: Res<Time>,

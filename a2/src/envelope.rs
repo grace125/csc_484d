@@ -1,5 +1,4 @@
-use crate::prelude::*;
-use rodio::{Sample, Source};
+use rodio::Source;
 use std::{f32::INFINITY, sync::Arc, time::Duration};
 
 // Assumed to be sorted by x; x is the time, y is the height of the envelope (from 0 to 1)
@@ -113,9 +112,11 @@ where
             .unwrap_or(INFINITY);
         let time2 = self.envelope.points.last().map(|p| p.0).unwrap_or(INFINITY);
         let min_time = time1.min(time2);
-        match min_time {
-            INFINITY => None,
-            _ => Some(Duration::from_secs_f32(min_time)),
+        if min_time == INFINITY {
+            None
+        }
+        else {
+            Some(Duration::from_secs_f32(min_time))
         }
     }
 }
