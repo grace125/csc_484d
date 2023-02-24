@@ -36,7 +36,7 @@ impl Complex {
     pub fn from_polar(r: f32, theta: f32) -> Complex {
         Complex {
             real: r * theta.cos(),
-            im: r * theta.sin()
+            im: r * theta.sin(),
         }
     }
 }

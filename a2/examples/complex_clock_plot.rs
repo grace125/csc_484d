@@ -1,4 +1,4 @@
-use std::f32::consts::{TAU, FRAC_PI_2};
+use std::f32::consts::{FRAC_PI_2, TAU};
 
 use a2::complex::*;
 use plotters::coord::types::RangedCoordf32;
@@ -14,8 +14,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let sec = 20.0;
 
     let z_hour = Complex::from_polar(2.0, hour / 12.0 * TAU - FRAC_PI_2);
-    let z_min =  Complex::from_polar(3.0, min / 60.0 * TAU - FRAC_PI_2);
-    let z_sec =  Complex::from_polar(3.0, sec / 60.0 * TAU - FRAC_PI_2);
+    let z_min = Complex::from_polar(3.0, min / 60.0 * TAU - FRAC_PI_2);
+    let z_sec = Complex::from_polar(3.0, sec / 60.0 * TAU - FRAC_PI_2);
 
     let root = root.apply_coord_spec(Cartesian2d::<RangedCoordf32, RangedCoordf32>::new(
         -4f32..4f32,
@@ -31,8 +31,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let one_sec_clockwise = Complex::from_polar(1.0, 1.0 / 60.0 * TAU - FRAC_PI_2);
     let one_sec_counter_clockwise = Complex::from_polar(1.0, -1.0 / 60.0 * TAU - FRAC_PI_2);
 
-    println!("Complex required to move one second clockwise: {:?}", one_sec_clockwise);
-    println!("Complex required to move one second counter-clockwise: {:?}", one_sec_counter_clockwise);
+    println!(
+        "Complex required to move one second clockwise: {:?}",
+        one_sec_clockwise
+    );
+    println!(
+        "Complex required to move one second counter-clockwise: {:?}",
+        one_sec_counter_clockwise
+    );
 
     Ok(())
 }
