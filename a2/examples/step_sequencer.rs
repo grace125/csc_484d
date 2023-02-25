@@ -1,6 +1,6 @@
+use a2::bevy_midi::output::*;
 use bevy::prelude::*;
 use bevy_egui::{egui, EguiContext, EguiPlugin};
-use a2::bevy_midi::output::*;
 use std::time::Duration;
 
 fn main() {
@@ -24,55 +24,64 @@ fn step_sequencer_windows(
     mut step_sequencer: ResMut<StepSequencer>,
     player: Option<ResMut<StepSequencePlayer>>,
 ) {
-
     for (i, layer) in step_sequencer.layers.iter_mut().enumerate() {
-        egui::Window::new(format!("Step Sequencer {:?}", i+1)).show(egui_context.ctx_mut(), |ui| {
-            for row in layer.data.iter_mut() {
-                ui.horizontal(|ui| {
-                    for (i, b) in row.iter_mut().enumerate() {
-                        let visuals = ui.visuals_mut();
+        egui::Window::new(format!("Step Sequencer {:?}", i + 1)).show(
+            egui_context.ctx_mut(),
+            |ui| {
+                for row in layer.data.iter_mut() {
+                    ui.horizontal(|ui| {
+                        for (i, b) in row.iter_mut().enumerate() {
+                            let visuals = ui.visuals_mut();
 
-                        visuals.widgets.inactive.bg_fill =
-
-                            match (&player, &b) {
-                                (Some(player), _) if player.index == Some(i) => 
-                                    if *b  { egui::Color32::from_rgb(0, 255, 255) }
-                                    else   { egui::Color32::GREEN },
-                                _ => if *b { egui::Color32::BLUE }
-                                     else  { egui::Color32::BLACK }
+                            visuals.widgets.inactive.bg_fill = match (&player, &b) {
+                                (Some(player), _) if player.index == Some(i) => {
+                                    if *b {
+                                        egui::Color32::from_rgb(0, 255, 255)
+                                    } else {
+                                        egui::Color32::GREEN
+                                    }
+                                }
+                                _ => {
+                                    if *b {
+                                        egui::Color32::BLUE
+                                    } else {
+                                        egui::Color32::BLACK
+                                    }
+                                }
                             };
-                        if ui.button("     ").clicked() {
-                            *b = !*b;
+                            if ui.button("     ").clicked() {
+                                *b = !*b;
+                            }
                         }
+                    });
+                }
+
+                ui.horizontal(|ui| {
+                    ui.label(format!("Channel: {:?}", layer.channel + 1));
+                    if ui.button("-").clicked() && layer.channel > 0 {
+                        layer.channel -= 1;
+                    }
+                    if ui.button("+").clicked() && layer.channel < 15 {
+                        layer.channel += 1;
                     }
                 });
-            }
 
-            ui.horizontal(|ui| {
-                ui.label(format!("Channel: {:?}", layer.channel + 1));
-                if ui.button("-").clicked() && layer.channel > 0 {
-                    layer.channel -= 1;
+                let mut s = format!("{:?}", layer.velocity);
+                ui.label("Velocity: ");
+                ui.add(egui::TextEdit::singleline(&mut s));
+                if let Ok(v) = s.parse::<u8>() {
+                    layer.velocity = v;
                 }
-                if ui.button("+").clicked() && layer.channel < 15 {
-                    layer.channel += 1;
+
+                let mut s = format!("{:?}", layer.lowest_value);
+                ui.label("Lowest Value: ");
+                ui.add(egui::TextEdit::singleline(&mut s));
+                if let Ok(v) = s.parse::<u8>() {
+                    layer.lowest_value = v;
                 }
-            });
-
-            let mut s = format!("{:?}", layer.velocity);
-            ui.label("Velocity: ");
-            ui.add(egui::TextEdit::singleline(&mut s));
-            if let Ok(v) = s.parse::<u8>() {
-                layer.velocity = v;
-            }
-
-            let mut s = format!("{:?}", layer.lowest_value);
-            ui.label("Lowest Value: ");
-            ui.add(egui::TextEdit::singleline(&mut s));
-            if let Ok(v) = s.parse::<u8>() {
-                layer.lowest_value = v;
-            }
-        });
-    }    
+            },
+        );
+    }
 }
 
 fn main_window(
@@ -80,20 +89,22 @@ fn main_window(
     mut step_sequencer: ResMut<StepSequencer>,
     mut commands: Commands,
     player: Option<ResMut<StepSequencePlayer>>,
-    output: Res<MidiOutput>
+    output: Res<MidiOutput>,
 ) {
     egui::Window::new("").show(egui_context.ctx_mut(), |ui| {
-
         ui.horizontal(|ui| {
             if ui.button("Play").clicked() {
                 commands.insert_resource(StepSequencePlayer {
-                    timer: Timer::new(Duration::from_secs_f32(60.0/step_sequencer.tempo), TimerMode::Repeating),
+                    timer: Timer::new(
+                        Duration::from_secs_f32(60.0 / step_sequencer.tempo),
+                        TimerMode::Repeating,
+                    ),
                     index: None,
                 });
             }
             if ui.button("Stop").clicked() {
                 commands.remove_resource::<StepSequencePlayer>();
-                
+
                 // Stop all currently playing notes
                 if let Some(player) = player {
                     if let Some(index) = player.index {
@@ -122,10 +133,7 @@ fn main_window(
     });
 }
 
-fn midi_port_window(
-    mut egui_context: ResMut<EguiContext>,
-    output: Res<MidiOutput>,
-) {
+fn midi_port_window(mut egui_context: ResMut<EguiContext>, output: Res<MidiOutput>) {
     egui::Window::new("Port").show(egui_context.ctx_mut(), |ui| {
         if ui.button("Refresh Ports").clicked() {
             output.refresh_ports();
@@ -148,7 +156,6 @@ fn play(
         match player.index {
             Some(index) => {
                 if player.timer.tick(time.delta()).just_finished() {
-
                     let next_index = (index + 1) % 16;
                     for layer in step_sequencer.layers.iter() {
                         for ev in layer.note_offs_at(index) {
@@ -179,7 +186,7 @@ struct StepSequenceLayer {
     data: [[bool; 16]; 16],
     channel: u8,
     lowest_value: u8,
-    velocity: u8
+    velocity: u8,
 }
 
 impl Default for StepSequenceLayer {
@@ -199,9 +206,9 @@ impl StepSequenceLayer {
         for j in 0..16 {
             if self.data[j][index] {
                 v.push([
-                    0b10000000 | (self.channel & 0b00001111), 
-                    (((15 - j) + self.lowest_value as usize) % 256) as u8, 
-                    self.velocity
+                    0b10000000 | (self.channel & 0b00001111),
+                    (((15 - j) + self.lowest_value as usize) % 256) as u8,
+                    self.velocity,
                 ]);
             }
         }
@@ -212,9 +219,9 @@ impl StepSequenceLayer {
         for j in 0..16 {
             if self.data[j][index] {
                 v.push([
-                    0b10010000 | (self.channel & 0b00001111), 
-                    (((15 - j) + self.lowest_value as usize) % 256) as u8, 
-                    self.velocity
+                    0b10010000 | (self.channel & 0b00001111),
+                    (((15 - j) + self.lowest_value as usize) % 256) as u8,
+                    self.velocity,
                 ]);
             }
         }
@@ -232,7 +239,7 @@ impl Default for StepSequencer {
     fn default() -> Self {
         StepSequencer {
             layers: Vec::new(),
-            tempo: 240.0
+            tempo: 240.0,
         }
     }
 }

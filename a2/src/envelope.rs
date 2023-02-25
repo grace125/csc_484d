@@ -46,19 +46,13 @@ impl Envelope {
 }
 
 #[derive(Clone)]
-pub struct EnvelopeSource<S>
-where
-    S: Source + Iterator<Item = f32>,
-{
+pub struct EnvelopeSource<S: Source<Item = f32>> {
     envelope: Envelope,
     source: S,
     time: f64,
 }
 
-impl<S> Iterator for EnvelopeSource<S>
-where
-    S: Source + Iterator<Item = f32>,
-{
+impl<S: Source<Item = f32>> Iterator for EnvelopeSource<S> {
     type Item = S::Item;
 
     fn next(&mut self) -> Option<f32> {
@@ -84,10 +78,7 @@ where
     }
 }
 
-impl<S> Source for EnvelopeSource<S>
-where
-    S: Source + Iterator<Item = f32>,
-{
+impl<S: Source<Item = f32>> Source for EnvelopeSource<S> {
     fn current_frame_len(&self) -> Option<usize> {
         let len_1 = self.source.current_frame_len().unwrap_or(std::usize::MAX);
         let len_2 = ((self.envelope.last_time() as f64 - self.time).max(0.0)
@@ -114,8 +105,7 @@ where
         let min_time = time1.min(time2);
         if min_time == INFINITY {
             None
-        }
-        else {
+        } else {
             Some(Duration::from_secs_f32(min_time))
         }
     }
