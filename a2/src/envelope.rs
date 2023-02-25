@@ -14,10 +14,7 @@ impl Envelope {
         self.points.last().map(|p| p.0).unwrap_or(0.0)
     }
 
-    pub fn source_from<S>(&self, source: S) -> EnvelopeSource<S>
-    where
-        S: Source + Iterator<Item = f32>,
-    {
+    pub fn source_from<S: Source<Item = f32>>(&self, source: S) -> EnvelopeSource<S> {
         EnvelopeSource {
             source,
             envelope: self.clone(),
@@ -105,7 +102,8 @@ impl<S: Source<Item = f32>> Source for EnvelopeSource<S> {
         let min_time = time1.min(time2);
         if min_time == INFINITY {
             None
-        } else {
+        }
+        else {
             Some(Duration::from_secs_f32(min_time))
         }
     }
